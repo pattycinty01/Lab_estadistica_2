@@ -140,6 +140,7 @@ Estando en esa página usando **GoogleChrome** ubícate en la tabla e inspeccion
 
 Para extraer esta table y convertirla en data frame, usamos el siguiente código:
 
+
 ```{r}
 library(rvest)
 url = read_html("https://en.wikipedia.org/wiki/Democracy_Index")
@@ -147,8 +148,17 @@ table = html_nodes(url, xpath='/html/body/div[2]/div/div[3]/main/div[3]/div[3]/d
 table = html_table (table)
 table =data.frame(table)
 ```
-
 ## Opción 2
+```{r}
+library(rvest)
+url = read_html("https://en.wikipedia.org/wiki/Democracy_Index")
+table =html_nodes(url,
+xpath='/html/body/div[2]/div/div[3]/main/div[3]/div[3]/div[1]/table[6]')
+table = html_table(table)
+table =data.frame(table)
+library(rio)
+export(table,"table.xlsx")
+```
 
 Vamos a ver otra forma de "scrapear", utilizando el paquete "rvest" (instalenlo antes).
 ¿Qué pasa si los datos que quiero obtener no están en un formato de tabla? Es decir no han sido programados en la página web de esa forma.
@@ -167,6 +177,16 @@ Para estas ocasiones, **rvest** nos sirve.
 library(rvest)
 url="https://www.gob.pe/institucion/rree/funcionarios"
 pagina_web=read_html(url)
+```
+
+
+```{r} 
+css_nombre="h3.text-2xl" #contenemos la clase css en un objeto
+nombre_html = html_nodes(pagina_web,css_nombre) #con html_nodes y html_text, obtenemos el codigo html que contiene los nombre
+nombre_texto = html_text(nombre_html)
+head(nombre_texto)#vemos los datos
+dataWS3 <- data.frame(NOMBRE = nombre_texto, CARGO = cargo_texto)
+head(dataWS3)
 ```
 
 + Para scrapear vamos a requerir obtener la clase CSS de los campos que necesitamos. En términos sencillos, la clase CSS es un código que identifica a uno o varios elementos HTML. En esta página web, "Nombre" y "Cargo" han sido programados con una clase CSS para cada una.
